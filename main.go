@@ -13,7 +13,7 @@ import (
 
 func main() {
 
-	client, err := mongo.NewClient(options.Client().ApplyURI("<MONGODB_URI>"))
+	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.6.0"))
 	if err != nil {
 		log.Fatal(err)
 	}
