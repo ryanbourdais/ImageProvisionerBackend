@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -10,6 +10,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
+
+type Data struct {
+	Number int
+	String string
+}
 
 func main() {
 
@@ -27,6 +32,29 @@ func main() {
 	databases, err := client.ListDatabaseNames(ctx, bson.M{})
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	collection := client.Database("testDatabase").Collection("test")
+
+	testData1 := Data{1, "A"}
+
+	_, err = collection.InsertOne(context.TODO(), testData1)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	result, err := collection.Find(ctx, bson.M{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer result.Close(ctx)
+	for result.Next(ctx) {
+		var results bson.M
+		if err = result.Decode(&results); err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(results)
 	}
 
 	fmt.Println(databases)
