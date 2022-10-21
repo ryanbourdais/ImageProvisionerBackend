@@ -22,11 +22,13 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	err = client.Connect(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer client.Disconnect(ctx)
 
 	databases, err := client.ListDatabaseNames(ctx, bson.M{})
@@ -49,6 +51,7 @@ func main() {
 	}
 
 	defer result.Close(ctx)
+
 	for result.Next(ctx) {
 		var results bson.M
 		if err = result.Decode(&results); err != nil {
