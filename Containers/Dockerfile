@@ -9,4 +9,6 @@ RUN apt install golang -y
 RUN go version
 RUN apt-get install git -y
 
+RUN apt install docker -y
+
 RUN git clone ${repo}
