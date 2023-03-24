@@ -1,66 +1,39 @@
 package main
 
 import (
-	"context"
 	"fmt"
-	"log"
-	"time"
+	"os"
+	"os/exec"
 
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"github.com/go-git/go-git/v5"
+	. "github.com/go-git/go-git/v5/_examples"
 )
 
-type Data struct {
-	Number int
-	String string
-}
-
 func main() {
+	command := "sh"
+	script := "./test.sh"
+	image := "java17_test:edge"
 
-	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.6.0"))
+	cmd := exec.Command(command, script, image)
+	stdout, err := cmd.Output()
+
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err.Error())
+		return
 	}
 
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	err = client.Connect(ctx)
-	if err != nil {
-		log.Fatal(err)
-	}
+	fmt.Print(string(stdout))
 
-	defer client.Disconnect(ctx)
+	CheckArgs("<path>")
+	path := os.Args[1]
 
-	databases, err := client.ListDatabaseNames(ctx, bson.M{})
-	if err != nil {
-		log.Fatal(err)
-	}
+	// We instantiate a new repository targeting the given path (the .git folder)
+	r, err := git.PlainOpen(path)
+	CheckIfError(err)
 
-	collection := client.Database("testDatabase").Collection("test")
+	// Get the working directory for the repository
+	w, err := r.Worktree()
+	CheckIfError(err)
 
-	testData1 := Data{1, "A"}
-
-	_, err = collection.InsertOne(context.TODO(), testData1)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	result, err := collection.Find(ctx, bson.M{})
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	defer result.Close(ctx)
-
-	for result.Next(ctx) {
-		var results bson.M
-		if err = result.Decode(&results); err != nil {
-			log.Fatal(err)
-		}
-		fmt.Println(results)
-	}
-
-	fmt.Println(databases)
-
-	fmt.Println("Hello, world")
+	fmt.Print(w.Pull(&git.PullOptions{}))
 }
