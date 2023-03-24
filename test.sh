@@ -1,3 +1,2 @@
 #!/bin/bash
-
-docker run -td $1
+docker run -td --env repo=$2 $1 > container.txt
