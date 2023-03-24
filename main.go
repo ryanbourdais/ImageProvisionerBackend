@@ -67,7 +67,7 @@ func main() {
 	}
 }
 
-//test commen
+//test comment
 //run this script in a base docker image to fire off new docker images with the proper image
 //have a db that has a bool for "changed" this script changes that value and fires off the corresponding image with the env var of the repo link then changes "changed" to false
 //image runs CI.sh and outputs a directory
