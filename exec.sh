@@ -1,1 +1,1 @@
-docker exec $1 bash -c "git clone $2 && cd $3 && cd .RyanCI && sh CI.sh"
+docker exec $1 bash -c "git clone $2 && cd '$3' && cd .RyanCI && sh CI.sh"
