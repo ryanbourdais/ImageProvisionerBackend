@@ -19,9 +19,4 @@ RUN source "$HOME/.sdkman/bin/sdkman-init.sh" \
 
 COPY ./code .
 
-RUN javac Main.java
-RUN git clone ${repo}
-
-RUN cd gradle-test && ./gradlew test
-RUN sh CI.sh
-CMD ["java", "Main"]
+RUN apt-get install git -y
